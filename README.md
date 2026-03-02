@@ -8,7 +8,7 @@ A MOSFET is a voltage-controlled device. It uses an electric field to control th
 
 Gate (G): The control terminal (isolated by a thin oxide layer).
 
-Source (S): Where the charge carriers (electrons or holes) enter the channel.
+Source (S): Where the charge carriers (electrons or holes) enter the channel. 
 
 Drain (D): Where the carriers leave the channel.
 
