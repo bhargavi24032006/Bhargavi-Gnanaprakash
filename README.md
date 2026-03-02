@@ -1,5 +1,55 @@
 # **LAB 1**
 ## CS Amplifier Design & Analysis (180nm Technology)
+### About MOSFET
+
+A MOSFET (Metal-Oxide-Semiconductor Field-Effect Transistor) is the backbone of modern electronics, used for everything from switching in your laptop’s CPU to amplifying signals in radio transmitters.
+
+A MOSFET is a voltage-controlled device. It uses an electric field to control the flow of current through a "channel." It has four terminals, though the Body (B) is often tied to the Source (S), leaving three functional pins:
+
+Gate (G): The control terminal (isolated by a thin oxide layer).
+
+Source (S): Where the charge carriers (electrons or holes) enter the channel.
+
+Drain (D): Where the carriers leave the channel.
+
+Main Operating Regions:
+
+Cut-off: V<sub>GS</sub> < V<sub>th</sub> (Transistor is OFF).
+
+Triode/Linear: V<sub>GS</sub> > V<sub>th</sub>  and V<sub>DS</sub> is small (V<sub>DS</sub> < V<sub>GS</sub> − V<sub>th</sub> )  (Acts like a variable resistor).
+
+Saturation: V<sub>GS</sub> >V<sub>th</sub>  and V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>th</sub>
+​
+  (Acts like a current source; ideal for amplification).
+
+### Comparing MOSFET Amplifiers
+There are three primary configurations. The Common Source (CS) is the most popular because it provides the best overall gain.
+
+| Feature	| Common Source (CS)	| Common Gate (CG)	| Common Drain (CD)| 
+| ----------| ------------------| --------------------| -----------------| 
+| Input Terminal	| Gate	| Source| 	Gate| 
+| Output Terminal| 	Drain| 	Drain| 	Source| 
+| Voltage Gain| 	High (Negative)| 	High (Positive)| 	≈1 (Unity)| 
+| Input Impedance| 	Very High| 	Low| 	Very High| 
+| Output Impedance	| High| 	High| 	Low| 
+| Phase Shift| 	180 <sup>∘</sup>(Inverting)| 	0<sup>∘</sup> (Non-Inverting)|	0<sup>∘</sup> (Non-Inverting)| 
+| Best Use Case| 	General purpose gain| 	High-frequency / RF| 	Buffering / Matching| 
+
+### Channel Length Modulation (CLM)
+In an ideal world, once a MOSFET is in saturation, the current ID stays perfectly constant even if you increase the Drain voltage (VDS ). In reality, it doesn't.
+
+But in reality as VDS increases, the depletion region at the Drain end of the channel grows. This effectively "pushes back" the channel, making the effective channel length (Leff ) shorter than the physical length (L).
+
+
+The Result:
+Because the channel is shorter, the resistance decreases, and the current ID increases slightly with VDS . This is modeled by the parameter λ (lambda) in the saturation equation:
+
+$$
+I_D = \frac{1}{2} \mu_n C_{ox} \left(\frac{W}{L}\right) (V_{GS} - V_{TH})^2
+$$
+
+CLM reduces the output resistance (ro ) of the transistor. In amplifiers, a lower ro means a lower total voltage gain. It is the MOSFET equivalent of the "Early Effect" in BJTs.
+
 ### Experiment Overview:
 
 A common-source amplifier is a type of FET amplifier where the input signal is applied to the gate, and the output is taken from the drain. The source is typically grounded. It provides high voltage gain and **180-degree phase shift** (inversion) between the input and output. It’s widely used for amplifying weak signals in analog circuits, with the voltage gain determined by the load resistor and the transconductance of the FET.
