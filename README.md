@@ -61,7 +61,7 @@ This experiment involves the design and simulation of a Common Source (CS) Ampli
 ### <u>Key Components and their roles</u>:
 1. **R1(Drain Resistor):** Provides the required voltage drop to amplify the signal.
 2. **W (Transistor Width):** Affects current ID and transconductance (gm), influencing gain and bandwidth.
-3. **V<sub>DD</sub> (Drain Supply Voltage):** Provides DC biasing for the NMOS transistor.
+3. **V<sub>DD</sub> (Drain Supply Voltage):** Provides DC biasing for the NMOS transistor. 
 4. **AC Input (SINE source):** The test signal used to analyze circuit response.
 
 ### **Circuit diagram:**
