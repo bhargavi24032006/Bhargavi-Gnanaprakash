@@ -14,11 +14,11 @@ Drain (D): Where the carriers leave the channel.
 
 Main Operating Regions:
 
-Cut-off: V<sub>GS</sub> < V<sub>th</sub> (Transistor is OFF).
+Cut-off : V<sub>GS</sub> < V<sub>th</sub> (Transistor is OFF).
 
-Triode/Linear: V<sub>GS</sub> > V<sub>th</sub>  and V<sub>DS</sub> is small (V<sub>DS</sub> < V<sub>GS</sub> − V<sub>th</sub> )  (Acts like a variable resistor).
+Triode/Linear : V<sub>GS</sub> > V<sub>th</sub>  and V<sub>DS</sub> is small (V<sub>DS</sub> < V<sub>GS</sub> − V<sub>th</sub> )  (Acts like a variable resistor).
 
-Saturation: V<sub>GS</sub> >V<sub>th</sub>  and V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>th</sub>
+Saturation : V<sub>GS</sub> >V<sub>th</sub>  and V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>th</sub>
 ​
   (Acts like a current source; ideal for amplification).
 
@@ -48,7 +48,7 @@ $$
 I_D = \frac{1}{2} \mu_n C_{ox} \left(\frac{W}{L}\right) (V_{GS} - V_{TH})^2
 $$
 
-CLM reduces the output resistance (ro ) of the transistor. In amplifiers, a lower ro means a lower total voltage gain. It is the MOSFET equivalent of the "Early Effect" in BJTs.
+CLM reduces the output resistance (ro ) of the transistor. In amplifiers, a lower ro means a lower total voltage gain. 
 
 ### Experiment Overview:
 
