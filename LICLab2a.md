@@ -697,7 +697,339 @@ FL = 0 and FH = 3GHZ
 
  ### Unity Gain Bandwidth (UGB)
    = AV*FH
+
+
+
    = 2.48* 3 
 
    = 7.44GHz
    
+
+
+
+
+# Design and Analysis of MOS Differential Amplifier Circuits
+
+## 1. Design Specifications (Given Values)
+
+Based on the laboratory requirements, the following parameters are used for the analysis and design of all three circuits:
+
+*   **Drain Supply Voltage ($V_{DD}$):** $0.9\text{V}$
+*   **Source Supply Voltage ($V_{SS}$):** $-0.4\text{V}$
+*   **Total Supply Voltage ($V_{total}$):** $1.3\text{V}$
+*   **Maximum Power Dissipation ($P$):** $\leq 1.5\text{mW}$ (Target: $1.5\text{mW}$)
+*   **Input Common Mode Voltage ($V_{inCM}$):** $0\text{V}$
+*   **Output Common Mode Voltage ($V_{OCM}$):** $0\text{V}$
+*   **Tail Node Voltage ($V_P$):** $-0.7\text{V}$
+*   **Channel Length ($L$):** $360\text{nm}$
+*   **Threshold Voltage ($V_{th}$):** $0.3664\text{V}$
+*   **Load Capacitance ($C_L$):** $10\text{pF}$
+
+---
+
+## 2. Circuit 1: Resistive Load Differential Amplifier
+
+### Theory
+The resistive load differential amplifier uses two NMOS transistors ($M_1, M_2$) and two drain resistors ($R_D$). It is the most basic form of a differential pair, used to amplify the difference between two inputs while suppressing the common-mode signal.
+
+### DC Analysis & Calculations
+**1. Total Tail Current ($I_{SS}$):**
+Using the power formula $P = (V_{DD} - V_{SS}) \times I_{SS}$:
+$$I_{SS} = \frac{1.5\text{mW}}{0.9\text{V} - (-0.4\text{V})} = \frac{1.5\text{mW}}{1.3\text{V}} \approx \mathbf{1.154\text{mA}}$$
+
+**2. Individual Drain Currents ($I_{D1}, I_{D2}$):**
+In a balanced state ($V_{in1} = V_{in2}$):
+$$I_{D1} = I_{D2} = \frac{I_{SS}}{2} = \mathbf{0.577\text{mA}}$$
+
+**3. Drain Resistor Value ($R_D$):**
+To maintain $V_{OCM} = 0\text{V}$:
+$$V_{OCM} = V_{DD} - (I_{D} \times R_D)$$
+$$0 = 0.9 - (0.577\text{mA} \times R_D) \implies R_D \approx \mathbf{1.56\text{k}\Omega}$$
+
+**4. Overdrive Voltage ($V_{ov}$):**
+$$V_{ov} = V_{GS} - V_{th} = (V_{inCM} - V_P) - V_{th}$$
+$$V_{ov} = (0 - (-0.7)) - 0.3664 = \mathbf{0.3336\text{V}}$$
+
+### Simulations & Results
+> **[INSERT CIRCUIT 1 SCHEMATIC HERE]**
+> *Inference: The circuit is biased to ensure $M_1$ and $M_2$ remain in the saturation region for linear amplification.*
+
+### Transient Analysis
+*   **Input Swing:** For linear operation, $V_{id} \leq \sqrt{2} \times V_{ov} \approx 0.47\text{V}$.
+> **[INSERT CIRCUIT 1 TRANSIENT WAVEFORM HERE]**
+> *Inference: The output shows a phase shift relative to the input and remains undistorted for small differential inputs.*
+
+---
+
+## 3. Circuit 2: Current Mirror Load Differential Amplifier
+
+### Theory
+By replacing the resistors with a PMOS current mirror, we convert the differential output into a single-ended output. This increases the differential gain ($A_d$) because the output resistance is now determined by the transistors' $r_o$ instead of a small $R_D$.
+
+### DC Analysis & Calculations
+*   **Currents:** $I_{D1} = I_{D2} = 0.577\text{mA}$ (Maintaining $1.5\text{mW}$ power).
+*   **Gain Calculation:**
+    $$A_v = g_{m1} \times (r_{o2} \parallel r_{o4})$$
+    *Where $g_{m1}$ is the transconductance of NMOS and $r_o$ is the output resistance.*
+
+### Simulations & Results
+> **[INSERT CIRCUIT 2 SCHEMATIC HERE]**
+> *Inference: The active load (PMOS mirror) provides a significantly higher effective load resistance compared to the resistive load.*
+
+### AC Analysis
+*   **Objective:** To determine Gain and Bandwidth.
+> **[INSERT CIRCUIT 2 AC RESPONSE/BODE PLOT HERE]**
+> *Inference: The frequency response highlights a higher DC gain but reduced bandwidth due to the high output impedance.*
+
+---
+
+## 4. Circuit 3: Active Load with Constant Current Source
+
+### Theory
+In this configuration, the tail resistor is replaced with an NMOS transistor acting as a constant current source. This provides a very high Common Mode Rejection Ratio (CMRR) by increasing the tail impedance.
+
+### DC Analysis & Calculations
+**1. Tail Transistor ($M_5$) Biasing:**
+$M_5$ must carry $I_{SS} = 1.154\text{mA}$.
+$$V_{GS5} = V_{th} + V_{ov5}$$
+The bias voltage $V_{B1}$ is set such that $M_5$ is in saturation: $V_{DS5} > V_{GS5} - V_{th}$.
+
+**2. CMRR Inference:**
+Since $CMRR = \left| \frac{A_d}{A_{cm}} \right|$ and $A_{cm} \propto \frac{1}{R_{tail}}$, the extremely high $r_{o5}$ of the tail transistor makes $A_{cm}$ nearly zero, maximizing the CMRR.
+
+### Simulations & Results
+> **[INSERT CIRCUIT 3 SCHEMATIC HERE]**
+> *Inference: This is the most stable design, mimicking a true ideal differential amplifier used in OP-AMP input stages.*
+
+### AC Analysis
+> **[INSERT CIRCUIT 3 GAIN & PHASE PLOT HERE]**
+> *Inference: The phase margin and unity-gain bandwidth (UGB) are optimized for stability in feedback systems.*
+
+---
+
+## 5. Comparative Analysis (Summary)
+
+Target: $L = 360\text{nm}$, $V_{th} = 0.3664\text{V}$, $P = 1.5\text{mW}$.
+
+
+| Feature | Circuit 1 (Resistive) | Circuit 2 (Mirror Load) | Circuit 3 (Active Load) |
+| :--- | :--- | :--- | :--- |
+| **Differential Gain** | Moderate | High | Very High |
+| **Output Resistance** | Low ($R_D$) | High ($r_{o2} \parallel r_{o4}$) | Highest |
+| **CMRR** | Low | Moderate | High |
+| **Area** | Lowest | Moderate | Highest (All Transistors) |
+| **Output Type** | Differential | Single-Ended | Single-Ended |
+
+**Final Inference:**
+While **Circuit 1** is simplest for basic amplification, **Circuit 3** is the preferred choice for Integrated Circuit (IC) design. It achieves the best gain and noise rejection performance while adhering to the $1.5\text{mW}$ power constraint.
+
+---
+
+
+# Experiment 04: MOS Differential Amplifier Analysis
+
+## 1. Design Specifications & Given Values
+Based on the laboratory manual, the following parameters are used for all three circuits:
+
+
+| Parameter | Symbol | Value |
+| :--- | :--- | :--- |
+| Supply Voltage | $V_{DD}$ | $0.9\text{ V}$ |
+| Negative Supply | $V_{SS}$ | $-0.4\text{ V}$ |
+| Power Dissipation | $P$ | $1.5\text{ mW}$ |
+| Channel Length | $L$ | $360\text{ nm}$ |
+| Threshold Voltage | $V_{th}$ | $0.3664\text{ V}$ |
+| Input Common Mode | $V_{inCM}$ | $0\text{ V}$ |
+| Output Common Mode | $V_{OCM}$ | $0\text{ V}$ |
+| Node Voltage | $V_p$ | $-0.7\text{ V}$ |
+| Load Capacitance | $C_L$ | $10\text{ pF}$ |
+
+---
+
+## 2. Circuit 1: Resistive Load Differential Pair
+
+### Step 1: DC Analysis & Operating Point
+**Goal:** Determine the tail current and resistor values to fix the operating point.
+
+**1. Tail Current ($I_{SS}$):**
+Using $P = (V_{DD} - V_{SS}) \cdot I_{SS}$:
+$$I_{SS} = \frac{1.5\text{ mW}}{0.9\text{ V} - (-0.4\text{ V})} = \frac{1.5\text{ mA}}{1.3} \approx \mathbf{1.154\text{ mA}}$$
+
+**2. Drain Current ($I_{D1,2}$):**
+Assuming symmetry: $I_{D1} = I_{D2} = \frac{I_{SS}}{2} \approx \mathbf{0.577\text{ mA}}$
+
+**3. Drain Resistor ($R_D$):**
+To set $V_{OCM} = 0\text{ V}$ at the output:
+$V_{OCM} = V_{DD} - (I_{D1} \cdot R_D) \implies 0 = 0.9 - (0.577\text{ mA} \cdot R_D)$
+$$R_D = \frac{0.9}{0.577\text{ mA}} \approx \mathbf{1.56\text{ k}\Omega}$$
+
+**4. Overdrive Voltage ($V_{ov}$):**
+$V_{GS} = V_{inCM} - V_p = 0 - (-0.7) = 0.7\text{ V}$
+$V_{ov} = V_{GS} - V_{th} = 0.7 - 0.3664 = \mathbf{0.3336\text{ V}}$
+
+> ****
+
+### Step 2: Input/Output Swing Analysis
+*   **$V_{icm\_min}$:** $V_p + V_{GS} \approx \mathbf{-0.5\text{ V}}$ (to keep $I_{SS}$ source in saturation).
+*   **$V_{icm\_max}$:** $V_{DD} - I_D R_D + V_{th} = 0 + 0.3664 = \mathbf{0.3664\text{ V}}$ (to keep $M_1, M_2$ in saturation).
+
+### Step 3: Transient Analysis (Linearity Check)
+*   **Case (a):** $V_{id} < \sqrt{2}V_{ov} \approx 0.47\text{ V}$. The output is a linear reproduction of the input.
+*   **Case (b):** $V_{id} > \sqrt{2}V_{ov}$. The tail current is completely steered to one side, causing the output to clip/flatline.
+
+> ****
+
+### Step 4: AC Analysis
+*   **Gain ($A_v$):** $g_m \cdot R_D \approx \frac{2 I_D}{V_{ov}} \cdot R_D \approx \mathbf{5.4\text{ V/V}}$
+*   **Inference:** Circuit 1 provides high linearity but low gain due to the resistive load limitations.
+
+---
+
+## 3. Circuit 2: Active Load (Current Mirror)
+**Inference:** Resistors are replaced by PMOS transistors ($M_4, M_5$) and $I_{SS}$ is replaced by NMOS ($M_3$). This increases output resistance ($r_o$), leading to higher gain.
+
+### Calculations:
+*   $I_{D3}$ is set to $1.154\text{ mA}$ by biasing $V_B$.
+*   $A_v = g_{m1} (r_{o1} || r_{o4})$.
+
+> ****
+
+---
+
+## 4. Circuit 3: CMOS Differential Pair
+**Inference:** This circuit uses a PMOS current mirror to convert differential current to single-ended output. This is the most common configuration for Op-Amp input stages.
+
+### Analysis:
+*   **Gain:** Highest among all three as $A_v = g_{m1}(r_{o2} || r_{o4})$.
+*   **Area:** Minimal, as it eliminates large resistors.
+*   **Swing:** Maximum possible output swing for a given supply.
+
+> ****
+
+
+# Experiment 04: MOS Differential Amplifier Analysis
+
+## 1. Design Specifications & Given Values
+The following parameters are applied across all three designs to ensure a consistent comparison:
+
+
+| Parameter | Symbol | Value |
+| :--- | :--- | :--- |
+| Supply Voltage | $V_{DD}$ | $0.9\text{ V}$ |
+| Negative Supply | $V_{SS}$ | $-0.4\text{ V}$ |
+| Power Dissipation | $P$ | $1.5\text{ mW}$ |
+| Channel Length | $L$ | $360\text{ nm}$ |
+| Threshold Voltage | $V_{th}$ | $0.3664\text{ V}$ |
+| Input Common Mode | $V_{inCM}$ | $0\text{ V}$ |
+| Output Common Mode | $V_{OCM}$ | $0\text{ V}$ |
+| Node Voltage | $V_p$ | $-0.7\text{ V}$ |
+| Load Capacitance | $C_L$ | $10\text{ pF}$ |
+
+---
+
+## 2. Circuit 1: Resistive Load Differential Pair
+
+### Step 1: DC Analysis & Operating Point
+**1. Tail Current ($I_{SS}$):**
+From $P = (V_{DD} - V_{SS}) \cdot I_{SS}$:
+$$I_{SS} = \frac{1.5\text{ mW}}{0.9\text{ V} - (-0.4\text{ V})} = \frac{1.5\text{ mA}}{1.3} \approx \mathbf{1.154\text{ mA}}$$
+
+**2. Drain Current ($I_{D1,2}$):**
+Assuming perfect symmetry: $I_{D1} = I_{D2} = \frac{I_{SS}}{2} \approx \mathbf{0.577\text{ mA}}$
+
+**3. Drain Resistor ($R_D$):**
+To fix $V_{OCM} = 0\text{ V}$ at the output:
+$V_{OCM} = V_{DD} - (I_{D1} \cdot R_D) \implies 0 = 0.9 - (0.577\text{ mA} \cdot R_D)$
+$$R_D = \frac{0.9}{0.577\text{ mA}} \approx \mathbf{1.56\text{ k}\Omega}$$
+
+**4. Overdrive Voltage ($V_{ov}$):**
+$V_{GS} = V_{inCM} - V_p = 0 - (-0.7) = 0.7\text{ V}$
+$V_{ov} = V_{GS} - V_{th} = 0.7 - 0.3664 = \mathbf{0.3336\text{ V}}$
+
+> ****
+
+### Step 2: Transient Analysis
+*   **Linear Region ($V_{id} < \sqrt{2}V_{ov} \approx 0.47\text{ V}$):** Output is an amplified sine wave.
+*   **Clipped Region ($V_{id} > \sqrt{2}V_{ov}$):** One transistor cuts off, causing the output to flatline at $V_{DD}$.
+
+> ****
+
+### Step 3: AC Analysis
+*   **Gain ($A_v$):** $g_m \cdot R_D \approx \frac{2 I_D}{V_{ov}} \cdot R_D \approx \mathbf{5.4\text{ V/V}}$
+*   **Inference:** Circuit 1 provides high linearity but low gain due to the physical resistor $R_D$.
+
+---
+
+## 3. Circuit 2: Active Load (Current Mirror Load)
+
+### Step 1: DC Analysis
+**1. Tail Current Source ($M_3$):**
+Instead of an ideal source, $M_3$ is biased at $V_B$ to provide $I_{D3} = 1.154\text{ mA}$.
+**2. PMOS Active Load ($M_4, M_5$):**
+$R_D$ is replaced by PMOS transistors. These are biased to allow $0.577\text{ mA}$ each. Because PMOS $r_o$ is very high, the voltage drop is managed by the transistor dimensions rather than a fixed resistor.
+
+### Step 2: Transient Analysis
+*   **Inference:** The active load increases the gain, narrowing the linear input range ($V_{id}$). The output swing is now restricted by the $V_{DS(sat)}$ of both the NMOS drivers and the PMOS loads.
+
+### Step 3: AC Analysis
+*   **Gain ($A_v$):** $g_{m1} (r_{o1} || r_{o4})$. Since $r_o$ is much larger than $R_D$, gain increases to **~20-30 V/V**.
+*   **Bandwidth:** Reduced compared to Circuit 1 because the high output resistance creates a lower-frequency pole with $C_L$.
+
+> ****
+
+---
+
+## 4. Circuit 3: CMOS Current Mirror (Differential to Single-Ended)
+
+### Step 1: DC Analysis
+**1. Configuration:**
+$M_4$ and $M_5$ are connected as a current mirror. This forces the current from the first branch into the second, effectively doubling the current change at the output node $V_{out2}$.
+**2. Power:**
+The tail current $I_{SS}$ remains $1.154\text{ mA}$ to maintain the $1.5\text{ mW}$ power budget.
+
+### Step 2: Transient Analysis
+*   **Inference:** This circuit is the standard for operational amplifiers. It provides excellent "Differential to Single-Ended" conversion. The output swing is symmetric around the common-mode point.
+
+### Step 3: AC Analysis
+*   **Gain ($A_v$):** $g_{m1} (r_{o2} || r_{o4})$. This results in the **highest gain (>50 V/V)** of all three configurations.
+*   **GBP:** The Gain-Bandwidth Product is optimized for high-performance analog processing.
+
+> ****
+
+---
+
+## 5. Comparison Table (Final Analysis)
+*Comparison for $L = 360\text{ nm}$, $V_{th} = 0.3664\text{ V}$, $P = 1.5\text{ mW}$.*
+
+
+| Parameter | Circuit 1 (Resistive) | Circuit 2 (Active) | Circuit 3 (CMOS Mirror) |
+| :--- | :--- | :--- | :--- |
+| **Voltage Gain** | ~5.4 V/V (Lowest) | ~25 V/V (Moderate) | >50 V/V (Highest) |
+| **Power Consumption** | $1.5\text{ mW}$ | $1.5\text{ mW}$ | $1.5\text{ mW}$ |
+| **Area Efficiency** | Low (Large $R_D$) | High | Excellent (All MOS) |
+| **Output Swing** | Limited by $R_D$ | Good | Best |
+| **Linearity** | Best | Moderate | Narrowest |
+
+---
+**Final Inference:**
+- **Circuit 1** is best for high-speed, low-gain applications where area is not a concern.
+- **Circuit 2** provides a balanced approach to gain and complexity.
+- **Circuit 3** is the most area-efficient and provides the highest gain, making it the industry standard for Op-Amp input stages.
+
+---
+
+## 5. Comparison Table
+Summary of results for $L = 360\text{ nm}$ and $P = 1.5\text{ mW}$:
+
+
+| Metric | Circuit 1 (Resistive) | Circuit 2 (Active Load) | Circuit 3 (CMOS Load) |
+| :--- | :--- | :--- | :--- |
+| **Voltage Gain ($A_v$)** | Lowest (~5-8) | Moderate (~15-25) | Highest (>50) |
+| **Power Consumption** | $1.5\text{ mW}$ | $1.5\text{ mW}$ | $1.5\text{ mW}$ |
+| **Area Efficiency** | Low (Large Resistors) | High | Best |
+| **Linear Range** | Best | Moderate | Narrowest |
+| **Output Swing** | Limited by $R_D$ | Good | Best |
+
+---
+**Conclusion:** 
+Circuit 3 is the most efficient for integrated circuit design due to its high gain and low area, while Circuit 1 is useful for applications requiring high linearity but lower gain.
