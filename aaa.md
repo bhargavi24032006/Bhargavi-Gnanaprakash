@@ -7,7 +7,7 @@ The following parameters are applied across all three designs for a consistent c
 | Parameter | Symbol | Value |
 | :--- | :--- | :--- |
 | Supply Voltage | $V_{DD}$ | $0.9\text{ V}$ |
-| Negative Supply | $V_{SS}$ | $-0.4\text{ V}$ |
+| Negative Supply | $V_{SS}$ | $-0.9\text{ V}$ |
 | Power Dissipation | $P$ | $1.5\text{ mW}$ |
 | Channel Length | $L$ | $360\text{ nm}$ |
 | Threshold Voltage | $V_{th}$ | $0.3664\text{ V}$ |
@@ -22,56 +22,104 @@ The following parameters are applied across all three designs for a consistent c
 
 ### Step 1: DC Analysis & Operating Point
 **1. Tail Current ($I_{SS}$):**
+
 Calculated from the power budget $P = (V_{DD} - V_{SS}) \cdot I_{SS}$:
-$$I_{SS} = \frac{1.5\text{ mW}}{0.9\text{ V} - (-0.4\text{ V})} = \frac{1.5\text{ mA}}{1.3} \approx \mathbf{1.154\text{ mA}}$$
+
+$$I_{SS} = \frac{1.5\text{ mW}}{0.9\text{ V} - (-0.9\text{ V})} = \frac{1.5\text{ mA}}{1.8} \approx \mathbf{0.833\text{ mA}}$$
 
 **2. Drain Current ($I_{D1,2}$):**
+
 Assuming perfect symmetry:
-$$I_{D1} = I_{D2} = \frac{I_{SS}}{2} = \frac{1.154\text{ mA}}{2} \approx \mathbf{0.577\text{ mA}}$$
+
+$$I_{D1} = I_{D2} = \frac{I_{SS}}{2} = \frac{0.833\text{ mA}}{2} \approx \mathbf{0.4166\text{ mA}}$$
 
 **3. Node Voltage ($V_p$):**
+
 With $V_{inCM} = 0\text{ V}$ and $V_{GS} = 0.5\text{ V}$:
+
 $$V_p = V_{inCM} - V_{GS} = 0\text{ V} - 0.5\text{ V} = \mathbf{-0.5\text{ V}}$$
 
 **4. Drain Resistor ($R_D$):**
+
 To fix $V_{OCM} = 0\text{ V}$ at the output:
+
 $$V_{OCM} = V_{DD} - (I_{D1} \cdot R_D)$$
-$$0 = 0.9 - (0.577\text{ mA} \cdot R_D) \implies R_D = \frac{0.9}{0.577\text{ mA}} \approx \mathbf{1.56\text{ k}\Omega}$$
+
+$$0 = 0.9 - (0.4166\text{ mA} \cdot R_D) \implies R_D = \frac{0.9}{0.4166\text{ mA}} \approx \mathbf{2.16\text{ k}\Omega}$$
 
 **5. Overdrive Voltage ($V_{ov}$):**
+
 $$V_{ov} = V_{GS} - V_{th} = 0.5 - 0.3664 = \mathbf{0.1336\text{ V}}$$
+
+
+ <img width="495" height="635" alt="DA1c" src="https://github.com/user-attachments/assets/64810d65-2ede-4cd3-8bcc-f6aac7b072d7" />
+
 
 > ****
 
 ### Step 2: Transient Analysis
 *   **Linear Region ($V_{id} < \sqrt{2}V_{ov}$):**
-    $$\sqrt{2} \cdot 0.1336 \approx \mathbf{0.189\text{ V}}$$
+
+     $$\sqrt{2} \cdot 0.1336 \approx \mathbf{0.189\text{ V}}$$
+
     If $V_{id} < 0.189\text{ V}$, the output is an amplified sine wave.
+
+    <img width="1917" height="858" alt="image" src="https://github.com/user-attachments/assets/19e535d9-c9b7-4ee4-91a3-cc99dd99db09" />
+
+
 *   **Clipped Region ($V_{id} > 0.189\text{ V}$):** One transistor cuts off, steering all $I_{SS}$ to one branch, causing the output to flatline at $V_{DD}$.
 
+  <img width="1916" height="856" alt="image" src="https://github.com/user-attachments/assets/6a7651ca-2345-4666-a0df-a40e275ac0e3" />
+
+
+  
 > ****
 
 ### Step 3: AC Analysis
-*   **Transconductance ($g_m$):**
-    $$g_m = \frac{2 I_D}{V_{ov}} = \frac{1.154\text{ mA}}{0.1336\text{ V}} \approx \mathbf{8.64\text{ mS}}$$
-*   **Voltage Gain ($A_v$):**
-    $$A_v = g_m \cdot R_D = 8.64\text{ mS} \times 1.56\text{ k}\Omega \approx \mathbf{13.48\text{ V/V}}$$
-*   **Inference:** Circuit 1 provides high linearity but the gain is limited by the physical size and value of the resistor $R_D$.
 
+*   **Transconductance ($g_m$):**
+  
+    $$g_m = \frac{2 I_D}{V_{ov}} = \frac{0.833\text{ mA}}{0.1336\text{ V}} \approx \mathbf{6.235\text{ mS}}$$
+    
+*   **Voltage Gain ($A_v$):**
+  
+    $$A_v = g_m \cdot R_D = 6.235\text{ mS} \times 2.16\text{ k}\Omega \approx \mathbf{13.4676\text{ V/V}}$$
+    
+    $$A_v = g_m \cdot R_D = 22.585\text{ dB}$$
+    
+*   **Inference:** Circuit 1 provides high linearity but the gain is limited by the physical size and value of the resistor $R_D$.
+  
+
+  <img width="1002" height="471" alt="image" src="https://github.com/user-attachments/assets/66f5b15e-dc50-44cb-b395-670df4e5f717" />
+
+
+  
 ---
 
 ## 3. Circuit 2: Active Load (Current Mirror Load)
 
 ### Step 1: DC Analysis
+
 **1. Tail Current Source ($M_3$):**
-$M_3$ is biased to provide $I_{D3} = 1.154\text{ mA}$. With $V_p = -0.5\text{ V}$, the drain-source voltage is $V_{DS3} = V_p - V_{SS} = 0.1\text{ V}$.
+
+$M_3$ is biased to provide $I_{D3} = 0.833\text{ mA}$.
+
+With $V_p = -0.7\text{ V}$
+
+The drain-source voltage is $V_{DS3} = V_p - V_{SS} = 0.2\text{ V}$.
+
 **2. PMOS Active Load ($M_4, M_5$):**
-$R_D$ is replaced by PMOS transistors. Since $V_{OCM} = 0\text{ V}$, the PMOS must support $0.577\text{ mA}$ each.
+
+$R_D$ is replaced by PMOS transistors. Since $V_{OCM} = 0\text{ V}$, the PMOS must support $0.4165\text{ mA}$ each.
+
 **3. Differential Gain ($A_v$):**
+
 $$A_v = g_{m1} \cdot (r_{o1} \parallel r_{o4})$$
+
 Since $r_o \gg R_D$, the gain increases significantly.
 
 ### Step 2: Transient Analysis
+
 *   **Inference:** The high output resistance ($r_o$) leads to much higher gain but reduces the input swing range. Output swing is restricted by $V_{DS(sat)}$ of the NMOS and PMOS devices.
 
 ### Step 3: AC Analysis
