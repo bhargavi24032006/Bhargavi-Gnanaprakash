@@ -117,7 +117,3 @@ The voltage follower (buffer) provides unity gain ($A_v = 1$) with high input im
 
 
 
-![Transient Graph](https://placeholder.com)
-
-*Shows $V_{in}$ vs $V_{out}$. Note the clipping in the Non-Inverting stage.*
-
