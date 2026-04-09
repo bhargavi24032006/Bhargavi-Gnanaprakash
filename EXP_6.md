@@ -7,7 +7,7 @@ This report documents the design and LTspice simulation of operational amplifier
 
 ### Input Parameters:
 * **$x_1(t) = -1V$** (DC Source)
-* **$x_2(t) = 0.5 \sin(2000\pi t)$** (AC Source, $f = 1kHz$, $V_p = 0.5V$)
+* **$x_2(t) = -0.5 \sin(2000\pi t)$** (AC Source, $f = 1kHz$, $V_p = 0.5V$)
 * **$x_3(t) = +1V$** (DC Source)
 * **Supply Rails ($V_{CC}/V_{EE}$)**: $\pm 15V$
 
